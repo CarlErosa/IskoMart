@@ -104,9 +104,14 @@ export default function Home() {
           <a className="transition-colors hover:text-[#7b2432]" href="#how-it-works">How it works</a>
           <a className="transition-colors hover:text-[#7b2432]" href="#community">Our community</a>
         </div>
-        <a href="#join" className="rounded-full bg-[#7b2432] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-          Join IskoMart
-        </a>
+        <div className="flex items-center gap-4">
+          <a href="/login" className="text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d]">
+            Log in
+          </a>
+          <a href="/auth" className="rounded-full bg-[#7b2432] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+            Join IskoMart
+          </a>
+        </div>
       </nav>
 
       <section className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-10 lg:pb-28 lg:pt-16">

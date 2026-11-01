@@ -21,9 +21,10 @@ uploaded to Supabase Storage only through an authorized server path, with metada
 in `listing_images`.
 
 Search and category filtering query `listings` joined to `categories`; storefront pages query
-the seller's public `profiles`, listings, and aggregate review data. Messaging will use a
-future conversation/message schema and Supabase Realtime; it is intentionally not included in
-the initial migration.
+the seller's public `profiles`, listings, and aggregate engagement data. Comments and reposts
+are authenticated mutations protected by RLS. Conversations and messages are scoped to their
+two participants; the current chat screen uses server actions and can be extended with
+Supabase Realtime later.
 
 ## Authentication Flow
 

@@ -29,3 +29,35 @@ body {
   background: #d3a445;
   color: #7b2432;
 }
+
+@keyframes loading-breathe {
+  0%, 100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes loading-slide {
+  0% {
+    transform: translate3d(-120%, 0, 0);
+  }
+  100% {
+    transform: translate3d(300%, 0, 0);
+  }
+}
+
+.loading-screen {
+  background:
+    radial-gradient(circle at center, rgba(255, 253, 248, 0.96) 0%, rgba(244, 234, 220, 0.9) 42%, #f1e7d8 100%);
+}
+
+.loading-logo {
+  animation: loading-breathe 2.2s ease-in-out infinite;
+}
+
+.loading-bar {
+  animation: loading-slide 1.8s linear infinite;
+  will-change: transform;
+}

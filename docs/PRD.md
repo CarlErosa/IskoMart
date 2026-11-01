@@ -2,7 +2,7 @@
 
 ## Assumptions
 
-- PUP students verify accounts with an approved `@pup.edu.ph` email address.
+- PUP students verify accounts with an approved `@iskolarngbayan.pup.edu.ph` email address.
 - Users can be buyers, sellers, or both through one account.
 - Seller contact is in-app chat.
 - Buyers meet sellers and pay in person; online payments and delivery are not part of MVP.

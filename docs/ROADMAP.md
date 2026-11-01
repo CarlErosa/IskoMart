@@ -7,5 +7,6 @@
 3. Build seller storefront and listing CRUD, including validated image uploads to Supabase
    Storage and listing ownership checks.
 4. Build public browse, search, category filtering, listing detail, and seller rating views.
-5. Add in-app conversations and messages with authenticated participants, realtime updates,
-   and meetup contact flows.
+5. Add in-app conversations and messages with authenticated participants and meetup contact
+   flows. The initial server-rendered chat flow is implemented; realtime updates remain a
+   follow-up enhancement.
