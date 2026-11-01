@@ -35,10 +35,10 @@ export default function ProfileSocial({
   return (
     <main className="min-h-screen bg-[#fbf8f2] text-[#281d1e]">
       <header className="border-b border-[#e8d9c5] bg-[#fffdf8]">
-        <div className="mx-auto flex h-[72px] max-w-5xl items-center justify-between px-5 lg:px-8">
-          <Link href="/account" className="text-sm font-bold text-[#7b2432]">← Marketplace</Link>
-          <Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-14 w-52 object-contain" />
-          <Link href="/profile/edit" className="rounded-full border border-[#7b2432] px-4 py-2 text-xs font-bold text-[#7b2432]">Edit profile</Link>
+        <div className="mx-auto flex h-[64px] max-w-5xl items-center justify-between gap-2 px-4 sm:h-[72px] sm:px-5 lg:px-8">
+          <Link href="/account" className="shrink-0 text-xs font-bold text-[#7b2432] sm:text-sm">← Marketplace</Link>
+          <Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-9 w-32 object-contain sm:h-14 sm:w-52" />
+          <Link href="/profile/edit" className="shrink-0 rounded-full border border-[#7b2432] px-3 py-2 text-[10px] font-bold text-[#7b2432] sm:px-4 sm:text-xs">Edit profile</Link>
         </div>
       </header>
       <div className="mx-auto max-w-5xl px-5 pb-20 lg:px-8">
@@ -46,14 +46,14 @@ export default function ProfileSocial({
           <div className="h-44 bg-[#7b2432] bg-cover bg-center sm:h-56" style={headerUrl ? { backgroundImage: `url("${headerUrl}")` } : undefined}>
             {!headerUrl && <div className="h-full bg-[radial-gradient(circle_at_75%_30%,rgba(211,164,69,.55),transparent_28%),linear-gradient(135deg,#7b2432,#5b1d28)]" />}
           </div>
-          <div className="relative px-6 pb-7 sm:px-10">
-            <div className="-mt-14 flex items-end justify-between">
+          <div className="relative px-4 pb-7 sm:px-10">
+            <div className="-mt-12 flex flex-wrap items-end justify-between gap-3 sm:-mt-14">
               {avatarUrl ? <Image src={avatarUrl} alt="" width={112} height={112} className="size-28 rounded-full border-4 border-[#fffdf8] object-cover" /> : <span className="flex size-28 items-center justify-center rounded-full border-4 border-[#fffdf8] bg-[#f5dfb4] font-serif text-5xl font-bold text-[#7b2432]">{initial}</span>}
               <span className="mb-2 rounded-full bg-[#f5ead8] px-3 py-1 text-xs font-semibold text-[#7b2432]">PUP Iskolar</span>
             </div>
-            <h1 className="mt-4 font-serif text-3xl font-bold text-[#7b2432]">{displayName}</h1>
+            <h1 className="mt-4 break-words font-serif text-3xl font-bold text-[#7b2432]">{displayName}</h1>
             <p className="mt-2 max-w-xl whitespace-pre-wrap text-sm leading-6 text-[#69595a]">{bio || "IskoMart community member"}</p>
-            <div className="mt-6 flex gap-8 text-sm"><span><strong className="text-[#281d1e]">{posts.length}</strong> posts</span><span><strong className="text-[#281d1e]">{likedPosts.length}</strong> liked</span></div>
+            <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm"><span><strong className="text-[#281d1e]">{posts.length}</strong> posts</span><span><strong className="text-[#281d1e]">{likedPosts.length}</strong> liked</span></div>
           </div>
         </section>
 

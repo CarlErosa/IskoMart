@@ -1,4 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
+import { connection } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { signOut } from "@/app/auth/actions";
 
 const categories = [
   { name: "School essentials", icon: "✦", count: "124 listings" },
@@ -81,7 +85,12 @@ function ListingArt({ type }: { type: string }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  await connection();
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  const isAuthenticated = Boolean(data.user);
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#fbf8f2] text-[#281d1e]">
       <div className="border-b border-[#e8d9c5] bg-[#f5ead8] px-5 py-2 text-center text-[11px] font-semibold tracking-[0.18em] text-[#7b2432] uppercase">
@@ -89,7 +98,7 @@ export default function Home() {
       </div>
 
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6 lg:px-10">
-        <a href="#" className="flex items-center gap-3" aria-label="IskoMart home">
+        <Link href="/" className="flex items-center gap-3" aria-label="IskoMart home">
           <Image
             src="/logos/logo-removebg-preview.png"
             alt="IskoMart"
@@ -98,19 +107,37 @@ export default function Home() {
             priority
             className="h-20 w-36 object-contain"
           />
-        </a>
+        </Link>
         <div className="hidden items-center gap-8 text-sm font-medium text-[#69595a] md:flex">
           <a className="transition-colors hover:text-[#7b2432]" href="#browse">Browse listings</a>
           <a className="transition-colors hover:text-[#7b2432]" href="#how-it-works">How it works</a>
           <a className="transition-colors hover:text-[#7b2432]" href="#community">Our community</a>
         </div>
-        <div className="flex items-center gap-4">
-          <a href="/login" className="text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d]">
-            Log in
-          </a>
-          <a href="/auth" className="rounded-full bg-[#7b2432] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-            Join IskoMart
-          </a>
+        <div className="flex items-center gap-3 sm:gap-4">
+          {isAuthenticated ? (
+            <>
+              <Link href="/profile" className="hidden text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d] sm:inline">
+                Profile
+              </Link>
+              <Link href="/account" className="rounded-full border border-[#7b2432] px-3 py-2 text-xs font-bold text-[#7b2432] transition-colors hover:bg-[#f5ead8] sm:px-4 sm:text-sm">
+                Marketplace
+              </Link>
+              <form action={signOut}>
+                <button type="submit" className="rounded-full bg-[#7b2432] px-4 py-2.5 text-xs font-bold text-white transition-transform hover:-translate-y-0.5 sm:px-5 sm:text-sm">
+                  Sign out
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d]">
+                Log in
+              </Link>
+              <Link href="/auth" className="rounded-full bg-[#7b2432] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                Join IskoMart
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -119,17 +146,17 @@ export default function Home() {
           <p className="mb-6 flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-[#b07b1d] uppercase">
             <span className="h-px w-8 bg-[#d3a445]" /> The PUP marketplace
           </p>
-          <h1 className="max-w-3xl font-serif text-6xl font-bold leading-[0.94] tracking-[-0.06em] text-[#7b2432] sm:text-7xl lg:text-[92px]">
-            Find your next <span className="relative whitespace-nowrap text-[#d3a445]">campus gem.</span>
+          <h1 className="max-w-3xl font-serif text-5xl font-bold leading-[0.96] tracking-[-0.06em] text-[#7b2432] sm:text-7xl lg:text-[92px]">
+            Find your next <span className="relative text-[#d3a445]">campus gem.</span>
           </h1>
           <p className="mt-7 max-w-lg text-lg leading-8 text-[#69595a]">
             Buy, sell, and discover good finds from fellow Iskolars. From reviewer notes to your next org fit, it&apos;s all here on campus.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-4">
-            <a href="#browse" className="flex items-center gap-3 rounded-full bg-[#7b2432] px-6 py-3.5 text-sm font-bold text-white shadow-[4px_4px_0_#d3a445] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#d3a445]">
+            <Link href="/account" className="flex items-center gap-3 rounded-full bg-[#7b2432] px-6 py-3.5 text-sm font-bold text-white shadow-[4px_4px_0_#d3a445] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#d3a445]">
               Explore listings <ArrowUpRight />
-            </a>
-            <a href="#sell" className="text-sm font-bold text-[#7b2432] underline decoration-[#d3a445] decoration-2 underline-offset-8">I want to sell</a>
+            </Link>
+            <Link href="/sell" className="text-sm font-bold text-[#7b2432] underline decoration-[#d3a445] decoration-2 underline-offset-8">I want to sell</Link>
           </div>
           <div className="mt-12 flex items-center gap-4 text-sm text-[#69595a]">
             <div className="flex -space-x-2">
@@ -141,15 +168,15 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative mx-auto h-[430px] w-full max-w-[500px] sm:h-[500px]">
+        <div className="relative mx-auto h-[360px] w-full max-w-[500px] sm:h-[500px]">
           <div className="absolute inset-8 rotate-3 rounded-[48%_52%_50%_46%] bg-[#f1dfbd]" />
-          <div className="absolute left-1/2 top-1/2 flex h-[330px] w-[280px] -translate-x-1/2 -translate-y-1/2 rotate-[-6deg] flex-col justify-between rounded-[24px] border-2 border-[#7b2432] bg-[#fffdf8] p-5 shadow-[10px_12px_0_#7b2432] sm:h-[370px] sm:w-[320px]">
+          <div className="absolute left-1/2 top-1/2 flex h-[300px] w-[250px] -translate-x-1/2 -translate-y-1/2 rotate-[-6deg] flex-col justify-between rounded-[24px] border-2 border-[#7b2432] bg-[#fffdf8] p-4 shadow-[8px_10px_0_#7b2432] sm:h-[370px] sm:w-[320px] sm:p-5 sm:shadow-[10px_12px_0_#7b2432]">
             <div className="flex items-start justify-between">
               <span className="rounded-full bg-[#f5ead8] px-3 py-1 text-[10px] font-bold tracking-wider text-[#7b2432] uppercase">Just listed</span>
               <span className="text-xl text-[#d3a445]">✦</span>
             </div>
             <div className="rounded-2xl bg-[#ead7bb] p-3">
-              <svg aria-hidden="true" viewBox="0 0 240 180" className="h-40 w-full">
+              <svg aria-hidden="true" viewBox="0 0 240 180" className="h-32 w-full sm:h-40">
                 <path d="m86 42 21-14h26l21 14 29 21-15 28-17-12v69H69V79L52 91 37 63l29-21 20-14Z" fill="#7B2432" />
                 <path d="M107 28c0 11 5 17 13 17s13-6 13-17" fill="none" stroke="#f4d28e" strokeWidth="4" />
                 <path d="M82 112h78M82 123h78M82 134h48" stroke="#f4d28e" strokeLinecap="round" strokeWidth="3" />
@@ -182,14 +209,14 @@ export default function Home() {
           </div>
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categories.map((category) => (
-              <a href="#listings" key={category.name} className="group rounded-2xl border border-white/20 bg-white/10 p-5 transition-colors hover:bg-white hover:text-[#7b2432]">
+              <Link href="/account" key={category.name} className="group rounded-2xl border border-white/20 bg-white/10 p-5 transition-colors hover:bg-white hover:text-[#7b2432]">
                 <div className="flex items-start justify-between">
                   <span className="text-3xl text-[#f4d28e]">{category.icon}</span>
                   <ArrowUpRight />
                 </div>
                 <h3 className="mt-9 font-serif text-xl font-bold">{category.name}</h3>
                 <p className="mt-1 text-xs text-white/60 group-hover:text-[#8b7775]">{category.count}</p>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -201,7 +228,7 @@ export default function Home() {
             <p className="mb-3 text-xs font-bold tracking-[0.2em] text-[#b07b1d] uppercase">From your fellow Iskolars</p>
             <h2 className="font-serif text-4xl font-bold tracking-[-0.04em] text-[#7b2432] sm:text-5xl">Fresh on the marketplace</h2>
           </div>
-          <a href="#browse" className="hidden items-center gap-2 text-sm font-bold text-[#7b2432] md:flex">See all listings <ArrowUpRight /></a>
+          <Link href="/account" className="hidden items-center gap-2 text-sm font-bold text-[#7b2432] md:flex">See all listings <ArrowUpRight /></Link>
         </div>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {featuredListings.map((listing) => (
