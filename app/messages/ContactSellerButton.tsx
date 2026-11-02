@@ -9,7 +9,7 @@ export default function ContactSellerButton({ listingId }: { listingId: string }
 
   return (
     <>
-      <form action={action} onSubmit={() => setDismissed(false)} className="ml-auto max-w-full">
+      <form action={action} onSubmit={() => setDismissed(false)} className="max-w-full">
         <input type="hidden" name="listingId" value={listingId} />
         <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-[#7b2432] px-3 py-1.5 font-semibold text-white transition hover:bg-[#641d29] disabled:cursor-not-allowed disabled:opacity-60">
           {pending ? "Opening..." : "Contact seller"}

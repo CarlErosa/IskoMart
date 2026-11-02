@@ -40,4 +40,5 @@ export async function toggleLike(formData: FormData) {
 
   revalidatePath("/account");
   revalidatePath("/profile");
+  revalidatePath(`/post/${listingId || needPostId}`);
 }

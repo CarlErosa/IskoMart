@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { displayNameSchema } from "@/lib/content/schemas";
 import { normalizeText } from "@/lib/content/normalize";
+import { PRIVACY_NOTICE_VERSION } from "@/lib/legal/consent";
 
 const authSchema = z.object({
   email: z
@@ -20,6 +21,9 @@ const authSchema = z.object({
 
 const signupSchema = authSchema.extend({
   displayName: displayNameSchema,
+  privacyConsent: z
+    .string()
+    .refine((value) => value === "on", "Please accept the Privacy Policy to create an account."),
 });
 
 export type AuthActionState = {
@@ -42,6 +46,7 @@ export async function signUp(
     email: getField(formData, "email"),
     password: getField(formData, "password"),
     displayName: getField(formData, "displayName"),
+    privacyConsent: getField(formData, "privacyConsent"),
   });
 
   if (!parsed.success) {
@@ -62,12 +67,19 @@ export async function signUp(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      data: { display_name: parsed.data.displayName },
+      data: {
+        display_name: parsed.data.displayName,
+        privacy_notice_version: PRIVACY_NOTICE_VERSION,
+      },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/callback`,
     },
   });
 
   if (error) {
+    if (error.message.includes("privacy_consent_required")) {
+      return { error: "Please accept the Privacy Policy to create an account." };
+    }
+
     if (isDuplicateAccountError(error.message)) {
       return { error: "An account already exists for this Gmail address." };
     }

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { PRIVACY_NOTICE_VERSION } from "@/lib/legal/consent";
 import { signIn, signUp, type AuthActionState } from "./actions";
 
 const initialState: AuthActionState = {};
@@ -101,6 +102,31 @@ export default function AuthForm({
               placeholder="At least 8 characters"
             />
           </label>
+          {isSignUp && (
+            <div className="flex items-start gap-3 rounded-xl border border-[#e8d9c5] bg-[#fbf8f2] p-3">
+              <input
+                id="privacyConsent"
+                name="privacyConsent"
+                type="checkbox"
+                required
+                value="on"
+                className="mt-0.5 size-4 shrink-0 accent-[#7b2432]"
+              />
+              <label htmlFor="privacyConsent" className="text-xs leading-5 text-[#69595a]">
+                I have read and consent to the{" "}
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-[#7b2432] underline decoration-[#d3a445] underline-offset-2"
+                >
+                  Privacy Policy
+                </Link>{" "}
+                (version {PRIVACY_NOTICE_VERSION}). I understand how IskoMart collects, uses, and retains
+                my data.
+              </label>
+            </div>
+          )}
           <button
             type="submit"
             disabled={isPending}

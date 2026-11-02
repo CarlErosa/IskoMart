@@ -233,20 +233,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      <footer id="community" className="bg-[#281d1e] px-5 py-8 text-[#f5ead8] lg:px-10">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 text-sm sm:flex-row sm:items-center">
-          <Image
-            src="/logos/text_logo.png"
-            alt="IskoMart"
-            width={112}
-            height={32}
-            className="h-8 w-28 object-contain"
-          />
-          <p className="text-[#cbb8aa]">For PUP students, by PUP students.</p>
-          <span className="text-[#8f7976]">© 2026 IskoMart</span>
-        </div>
-      </footer>
     </main>
   );
 }

@@ -77,6 +77,7 @@ export async function updatePost(
 
     revalidatePath("/account");
     revalidatePath("/profile");
+    revalidatePath(`/post/${parsed.data.listingId ?? parsed.data.needPostId}`);
   } catch (error) {
     return toActionError(error);
   }
@@ -135,6 +136,11 @@ export async function deletePost(formData: FormData) {
 
   revalidatePath("/account");
   revalidatePath("/profile");
+  revalidatePath(`/post/${parsed.data.listingId ?? parsed.data.needPostId}`);
+
+  if (formData.get("returnToAccount") === "1") {
+    redirect("/account");
+  }
 }
 
 export async function addComment(
@@ -179,6 +185,7 @@ export async function addComment(
     }
 
     revalidatePath("/account");
+    revalidatePath(`/post/${parsed.data.listingId ?? parsed.data.needPostId}`);
     return { success: true, flagged: comment.moderation_status === "flagged" };
   } catch (error) {
     return toActionError(error);
@@ -223,4 +230,5 @@ export async function toggleRepost(formData: FormData) {
   }
 
   revalidatePath("/account");
+  revalidatePath(`/post/${parsed.data.listingId ?? parsed.data.needPostId}`);
 }

@@ -63,11 +63,22 @@ export default function ProfileSocial({
             <button type="button" onClick={() => setTab("liked")} className={`flex-1 border-b-2 px-4 py-4 text-sm font-semibold ${tab === "liked" ? "border-[#7b2432] text-[#7b2432]" : "border-transparent text-[#a4938d]"}`}>Liked</button>
           </div>
           {visiblePosts.length ? visiblePosts.map((post) => (
-            <article key={`${post.kind}-${post.id}`} className="border-b border-[#e8d9c5] py-6">
-              <p className="text-[10px] font-bold tracking-[0.18em] text-[#b07b1d] uppercase">{post.kind === "listing" ? "Listing" : "Looking for"}</p>
-              <h2 className="mt-2 font-serif text-2xl font-bold text-[#7b2432]">{post.title}</h2>
-              <p className="mt-2 text-[15px] leading-7 text-[#45383a]">{post.body}</p>
-              <div className="mt-4 flex items-center justify-between text-xs text-[#8b7775]"><span>{post.meta}</span>{post.price !== undefined && <strong className="text-[#7b2432]">₱{post.price.toLocaleString("en-PH")}</strong>}</div>
+            <article key={`${post.kind}-${post.id}`} className="border-b border-[#e8d9c5]">
+              <Link
+                href={`/post/${post.id}`}
+                className="group block px-2 py-6 transition hover:bg-[#f5ead8]/40"
+              >
+                <p className="text-[10px] font-bold tracking-[0.18em] text-[#b07b1d] uppercase">{post.kind === "listing" ? "Listing" : "Looking for"}</p>
+                <h2 className="mt-2 font-serif text-2xl font-bold text-[#7b2432] group-hover:underline">{post.title}</h2>
+                <p className="mt-2 text-[15px] leading-7 text-[#45383a]">{post.body}</p>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-[#8b7775]">
+                  <span>{post.meta}</span>
+                  <span className="flex items-center gap-4">
+                    {post.price !== undefined && <strong className="text-[#7b2432]">₱{post.price.toLocaleString("en-PH")}</strong>}
+                    <span className="font-semibold text-[#7b2432]">View post →</span>
+                  </span>
+                </div>
+              </Link>
             </article>
           )) : <div className="py-16 text-center text-sm text-[#8b7775]">{tab === "posts" ? "Your posts will appear here." : "Posts you like will appear here."}</div>}
         </section>

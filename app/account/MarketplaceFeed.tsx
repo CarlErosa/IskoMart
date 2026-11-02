@@ -6,22 +6,10 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { createNeedPost, type NeedPostActionState } from "./actions";
-import { toggleRepost } from "@/app/engagement-actions";
-import ContactSellerButton from "@/app/messages/ContactSellerButton";
 import { signOut } from "@/app/auth/actions";
 import ModerationBadge from "@/components/ModerationBadge";
+import PostActions, { type PostComment } from "@/components/PostActions";
 import PostMenu from "@/components/PostMenu";
-import ReportMenu from "@/components/ReportMenu";
-import LikeButton from "./LikeButton";
-import CommentForm from "./CommentForm";
-
-type FeedComment = {
-  id: string;
-  body: string;
-  authorId: string;
-  authorName: string;
-  moderationStatus: string;
-};
 
 type FeedListing = {
   id: string;
@@ -43,7 +31,7 @@ type FeedListing = {
   reposted: boolean | string | null;
   sharedBy: string | null;
   moderationStatus: string;
-  comments: FeedComment[];
+  comments: PostComment[];
 };
 
 type FeedCategory = {
@@ -66,7 +54,7 @@ type FeedNeed = {
   reposted: boolean | string | null;
   sharedBy: string | null;
   moderationStatus: string;
-  comments: FeedComment[];
+  comments: PostComment[];
 };
 
 const postColors = ["bg-[#f5dfb4]", "bg-[#d9e2d4]", "bg-[#e4d9e8]", "bg-[#dce7ed]"];
@@ -75,139 +63,11 @@ function SearchIcon() {
   return <svg aria-hidden="true" viewBox="0 0 20 20" className="size-4"><circle cx="8.75" cy="8.75" r="5.75" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m13 13 4 4" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" /></svg>;
 }
 
-function CommentIcon() {
-  return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px]" fill="none"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5 7.8 7.8 0 0 1-3.15-.66L4 20l1.66-4.1A7.47 7.47 0 0 1 5 11.5 7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-
-function RepostIcon({ active }: { active: boolean }) {
-  return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px]" fill="none"><path d="m17 3 4 4-4 4M3 7h18M7 21l-4-4 4-4M21 17H3" stroke="currentColor" strokeWidth={active ? "2.2" : "1.7"} strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-
-function ShareIcon() {
-  return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px]" fill="none"><path d="M7 12a5 5 0 0 1 5-5h6M17 3l4 4-4 4M17 12a5 5 0 0 1-5 5H6M7 21l-4-4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-
-function ShareButton({ postId }: { postId: string }) {
-  const [shared, setShared] = useState(false);
-
-  async function sharePost() {
-    const url = `${window.location.origin}${window.location.pathname}#need-${postId}`;
-    const shareData = { title: "IskoMart post", text: "Check out this post on IskoMart", url };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(url);
-      }
-      setShared(true);
-      window.setTimeout(() => setShared(false), 2000);
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      await navigator.clipboard?.writeText(url);
-      setShared(true);
-      window.setTimeout(() => setShared(false), 2000);
-    }
-  }
-
-  return <button type="button" onClick={sharePost} aria-label="Share post" className="ml-auto inline-flex items-center gap-1.5 transition hover:text-[#7b2432]"><ShareIcon /><span>{shared ? "Copied" : "Share"}</span></button>;
-}
 
 function AuthorAvatar({ name, avatarUrl, tone }: { name: string; avatarUrl: string | null; tone: "gold" | "green" }) {
   return avatarUrl
     ? <Image src={avatarUrl} alt="" width={40} height={40} className="size-10 shrink-0 rounded-full object-cover" />
     : <span className={`flex size-10 shrink-0 items-center justify-center rounded-full font-serif text-lg font-bold text-[#7b2432] ${tone === "gold" ? "bg-[#f5dfb4]" : "bg-[#d9e2d4]"}`}>{name.charAt(0).toUpperCase()}</span>;
-}
-
-function PostActions({
-  listingId,
-  sellerId,
-  needPostId,
-  likeCount,
-  repostCount,
-  liked,
-  reposted,
-  comments,
-  currentUserId,
-  blockedUserIds,
-}: {
-  listingId?: string;
-  sellerId?: string;
-  needPostId?: string;
-  likeCount: number;
-  repostCount: number;
-  liked: boolean;
-  reposted: boolean | string | null;
-  comments: FeedComment[];
-  currentUserId: string;
-  blockedUserIds: string[];
-}) {
-  const isReposted = reposted === true;
-  const sharedBy = typeof reposted === "string" ? reposted : isReposted ? "You" : null;
-  return (
-    <div className="mt-4">
-      {sharedBy && (
-        <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold text-[#8b7775]">
-          <RepostIcon active />
-          {sharedBy} shared this
-        </p>
-      )}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-xs text-[#8b7775]">
-        <LikeButton listingId={listingId} needPostId={needPostId} initialLiked={liked} initialCount={likeCount} />
-        <details className="relative">
-          <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 transition hover:text-[#7b2432]">
-            <CommentIcon />
-            <span>{comments.length}</span>
-          </summary>
-          <div className="absolute left-0 top-7 z-20 w-[min(18rem,calc(100vw-5rem))] rounded-xl border border-[#e8d9c5] bg-[#fbf8f2] p-3 shadow-lg">
-            {comments.length > 0 && (
-              <div className="max-h-48 space-y-3 overflow-y-auto">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="space-y-1">
-                    <p className="break-words text-xs leading-5 text-[#45383a]">
-                      <strong>{comment.authorName}</strong> {comment.body}
-                      {comment.moderationStatus !== "visible" && (
-                        <span className="ml-1">
-                          <ModerationBadge status={comment.moderationStatus} />
-                        </span>
-                      )}
-                    </p>
-                    {comment.authorId !== currentUserId && (
-                      <div className="flex justify-end">
-                        <ReportMenu
-                          targetType="comment"
-                          targetId={comment.id}
-                          authorId={comment.authorId}
-                          authorName={comment.authorName}
-                          isBlocked={blockedUserIds.includes(comment.authorId)}
-                          inline
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            <CommentForm listingId={listingId} needPostId={needPostId} />
-          </div>
-        </details>
-        <form action={toggleRepost}>
-          <input type="hidden" name="listingId" value={listingId ?? ""} />
-          <input type="hidden" name="needPostId" value={needPostId ?? ""} />
-          <button
-            type="submit"
-            aria-label={isReposted ? "Undo repost" : "Repost"}
-            className={`inline-flex items-center gap-1.5 transition hover:text-[#7b2432] ${isReposted ? "font-bold text-[#7b2432]" : ""}`}
-          >
-            <RepostIcon active={isReposted} />
-            <span>{repostCount}</span>
-          </button>
-        </form>
-        {listingId && sellerId && <ContactSellerButton listingId={listingId} />}
-        {!listingId && needPostId && <ShareButton postId={needPostId} />}
-      </div>
-    </div>
-  );
 }
 
 export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, currentUserId, blockedUserIds, listings, needs, categories }: { displayName: string; avatarUrl: string | null; isAdmin: boolean; currentUserId: string; blockedUserIds: string[]; listings: FeedListing[]; needs: FeedNeed[]; categories: FeedCategory[] }) {
@@ -300,13 +160,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, curre
           <div className="divide-y divide-[#e8d9c5]">{hasFeedContent ? (
             <>
             {matchingNeeds.map((need) => (
-              <article id={`need-${need.id}`} key={`need-${need.id}`} className="py-7">
-                {need.sharedBy && (
-                  <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold text-[#8b7775]">
-                    <RepostIcon active />
-                    {need.sharedBy} shared this
-                  </p>
-                )}
+              <article id={`need-${need.id}`} key={`need-${need.id}`} className="scroll-mt-24 py-7">
                 <div className="flex gap-3">
                   <AuthorAvatar name={need.requesterName} avatarUrl={need.avatarUrl} tone="green" />
                   <div className="min-w-0 flex-1">
@@ -350,7 +204,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, curre
               </article>
             ))}
             {filteredListings.map((listing, index) => (
-            <article key={listing.id} className="py-7">
+            <article id={`listing-${listing.id}`} key={listing.id} className="scroll-mt-24 py-7">
               <div className="flex gap-3">
                 <AuthorAvatar name={listing.sellerName} avatarUrl={listing.avatarUrl} tone="gold" />
                 <div className="min-w-0 flex-1">

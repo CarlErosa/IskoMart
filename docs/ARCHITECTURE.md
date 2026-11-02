@@ -28,13 +28,15 @@ Supabase Realtime later.
 
 ## Authentication Flow
 
-1. A user signs up with a personal Gmail address.
+1. A user signs up with a personal Gmail address and accepts the current privacy notice.
 2. Supabase Auth sends the verification email and establishes the authenticated session after
    confirmation.
-3. A protected server action creates the matching `profiles` row from the authenticated user.
-4. Protected server actions obtain the user from the server Supabase client, never from a
+3. An `auth.users` trigger records the accepted notice version and timestamp in
+   `public.privacy_consents`; signups without a notice version are rejected.
+4. A protected server action creates the matching `profiles` row from the authenticated user.
+5. Protected server actions obtain the user from the server Supabase client, never from a
    client-provided user ID.
-5. RLS policies use `auth.uid()` to enforce profile ownership and listing/review permissions.
+6. RLS policies use `auth.uid()` to enforce profile ownership and listing/review permissions.
 
 The application must reject non-Gmail email addresses at the server boundary and should also
 configure the same restriction in the Supabase Auth policy or hook.
