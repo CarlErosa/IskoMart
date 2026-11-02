@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { connection } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 const exploreLinks = [
   { href: "/account", label: "Browse marketplace" },
@@ -15,7 +17,26 @@ const policyLinks = [
   { href: "/rules", label: "Community Rules" },
 ];
 
-export default function SiteFooter() {
+export default async function SiteFooter() {
+  await connection();
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  let isAdmin = false;
+
+  if (authData.user) {
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error("Unable to load footer navigation.");
+    }
+
+    isAdmin = profile?.is_admin ?? false;
+  }
+
   return (
     <footer
       id="community"
@@ -58,6 +79,13 @@ export default function SiteFooter() {
                     </Link>
                   </li>
                 ))}
+                {isAdmin && (
+                  <li>
+                    <Link href="/admin" className="font-semibold text-[#d3a445] transition hover:text-[#f5ead8]">
+                      Admin moderation
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>

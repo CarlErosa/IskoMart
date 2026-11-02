@@ -77,7 +77,7 @@ export default async function Home() {
         Built for Iskolars. Verified with your Gmail address.
       </div>
 
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6 lg:px-10">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-5 sm:px-5 sm:py-6 lg:px-10">
         <Link href="/" className="flex items-center gap-3" aria-label="IskoMart home">
           <Image
             src="/logos/logo-removebg-preview.png"
@@ -85,7 +85,7 @@ export default async function Home() {
             width={112}
             height={64}
             priority
-            className="h-20 w-36 object-contain"
+            className="h-16 w-28 object-contain sm:h-20 sm:w-36"
           />
         </Link>
         <div className="hidden items-center gap-8 text-sm font-medium text-[#69595a] md:flex">
@@ -93,18 +93,18 @@ export default async function Home() {
           <a className="transition-colors hover:text-[#7b2432]" href="#how-it-works">How it works</a>
           <a className="transition-colors hover:text-[#7b2432]" href="#community">Our community</a>
         </div>
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-4">
           <ThemeToggle />
           {isAuthenticated ? (
             <>
               <Link href="/profile" className="hidden text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d] sm:inline">
                 Profile
               </Link>
-              <Link href="/account" className="rounded-full border border-[#7b2432] px-3 py-2 text-xs font-bold text-[#7b2432] transition-colors hover:bg-[#f5ead8] sm:px-4 sm:text-sm">
+              <Link href="/account" className="rounded-full border border-[#7b2432] px-3 py-2 text-xs font-bold whitespace-nowrap text-[#7b2432] transition-colors hover:bg-[#f5ead8] sm:px-4 sm:text-sm">
                 Marketplace
               </Link>
               <form action={signOut}>
-                <button type="submit" className="rounded-full bg-[#7b2432] px-4 py-2.5 text-xs font-bold text-white transition-transform hover:-translate-y-0.5 sm:px-5 sm:text-sm">
+                <button type="submit" className="rounded-full bg-[#7b2432] px-4 py-2.5 text-xs font-bold whitespace-nowrap text-white transition-transform hover:-translate-y-0.5 sm:px-5 sm:text-sm">
                   Sign out
                 </button>
               </form>
@@ -114,8 +114,9 @@ export default async function Home() {
               <Link href="/login" className="text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d]">
                 Log in
               </Link>
-              <Link href="/auth" className="rounded-full bg-[#7b2432] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-                Join IskoMart
+              <Link href="/auth" className="rounded-full bg-[#7b2432] px-3.5 py-2.5 text-xs font-bold whitespace-nowrap text-white transition-transform hover:-translate-y-0.5 sm:px-5 sm:text-sm">
+                <span className="sm:hidden">Join</span>
+                <span className="hidden sm:inline">Join IskoMart</span>
               </Link>
             </>
           )}

@@ -103,15 +103,14 @@ export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, curre
   return (
     <main className="min-h-screen bg-[#fbf8f2] text-[#281d1e]">
       <header className="sticky top-0 z-20 border-b border-[#e8d9c5]/80 bg-[#fbf8f2]/95 backdrop-blur">
-        <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-5 px-5 lg:px-8">
-          <Link href="/" aria-label="IskoMart home"><Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-10 w-36 object-contain sm:h-14 sm:w-52" /></Link>
-          <div className="hidden items-center gap-8 text-sm text-[#8b7775] md:flex"><span className="font-semibold text-[#7b2432]">Home</span><Link href="/messages" className="transition hover:text-[#7b2432]">Messages</Link><Link href="/profile" className="transition hover:text-[#7b2432]">Profile</Link>{isAdmin && <Link href="/admin" className="font-semibold text-[#7b2432] transition hover:text-[#b07b1d]">Admin</Link>}</div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-3 px-4 pr-6 sm:gap-5 sm:px-5 lg:px-8">
+          <Link href="/" aria-label="IskoMart home" className="shrink-0"><Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-10 w-28 shrink-0 object-contain sm:h-14 sm:w-52" /></Link>
+          <div className="hidden items-center gap-8 text-sm text-[#8b7775] md:flex"><span className="font-semibold text-[#7b2432]">Home</span><Link href="/messages" className="transition hover:text-[#7b2432]">Messages</Link><Link href="/profile" className="transition hover:text-[#7b2432]">Profile</Link></div>
+          <div className="flex shrink-0 items-center gap-0 sm:gap-2">
             <ThemeToggle />
-            <Link href="/messages" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Messages</Link>
-            {isAdmin && <Link href="/admin" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Admin</Link>}
-            <form action={signOut}><button type="submit" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:px-4 sm:text-sm">Sign out</button></form>
-            <Link href="/sell" className="whitespace-nowrap rounded-full bg-[#7b2432] px-3.5 py-2.5 text-xs font-bold text-white transition hover:bg-[#641d29] sm:px-5 sm:text-sm"><span className="sm:hidden">Sell</span><span className="hidden sm:inline">Sell something</span></Link>
+            <Link href="/messages" className="whitespace-nowrap rounded-full px-2 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Messages</Link>
+            <form action={signOut}><button type="submit" className="whitespace-nowrap rounded-full px-2 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:px-4 sm:text-sm">Sign out</button></form>
+            <Link href="/sell" className="whitespace-nowrap rounded-full bg-[#7b2432] px-3 py-2.5 text-xs font-bold text-white transition hover:bg-[#641d29] sm:px-5 sm:text-sm"><span className="sm:hidden">Sell</span><span className="hidden sm:inline">Sell something</span></Link>
           </div>
         </div>
       </header>
