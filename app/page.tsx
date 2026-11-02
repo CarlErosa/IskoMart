@@ -4,53 +4,10 @@ import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
 
-const categories = [
-  { name: "School essentials", icon: "✦", count: "124 listings" },
-  { name: "Fashion & finds", icon: "◌", count: "86 listings" },
-  { name: "Food & snacks", icon: "⌁", count: "52 listings" },
-  { name: "Gadgets & tech", icon: "▣", count: "41 listings" },
-];
-
-const featuredListings = [
-  {
-    title: "PUP College Shirt",
-    seller: "Mika · Sta. Mesa",
-    price: "₱250",
-    tag: "Campus favorite",
-    color: "bg-[#f5dfb4]",
-    art: "shirt",
-  },
-  {
-    title: "Handmade beaded keychains",
-    seller: "Jules · COC",
-    price: "₱85",
-    tag: "Fresh find",
-    color: "bg-[#d9e2d4]",
-    art: "beads",
-  },
-  {
-    title: "Calculus notes & reviewer",
-    seller: "Anton · PUP Main",
-    price: "₱120",
-    tag: "Study buddy",
-    color: "bg-[#e4d9e8]",
-    art: "notes",
-  },
-];
-
 function ArrowUpRight() {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4">
       <path d="M3 13 13 3M5 3h8v8" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 20 20" className="size-5">
-      <circle cx="8.75" cy="8.75" r="5.75" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <path d="m13 13 4 4" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" />
     </svg>
   );
 }
@@ -88,8 +45,30 @@ function ListingArt({ type }: { type: string }) {
 export default async function Home() {
   await connection();
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const [{ data }, { data: recentListings }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("listings")
+      .select("id, title, price, meetup_location, created_at, profiles!listings_seller_id_fkey(display_name, campus), categories!listings_category_id_fkey(name), listing_images(storage_path, sort_order)")
+      .eq("is_available", true)
+      .order("created_at", { ascending: false })
+      .limit(3),
+  ]);
   const isAuthenticated = Boolean(data.user);
+  const featuredListings = (recentListings ?? []).map((listing) => {
+    const seller = Array.isArray(listing.profiles) ? listing.profiles[0] : listing.profiles;
+    const category = Array.isArray(listing.categories) ? listing.categories[0] : listing.categories;
+    const images = Array.isArray(listing.listing_images) ? listing.listing_images : [];
+    const coverPath = images.sort((a, b) => a.sort_order - b.sort_order)[0]?.storage_path;
+
+    return {
+      title: listing.title,
+      seller: [seller?.display_name, seller?.campus].filter(Boolean).join(" · ") || "PUP student",
+      price: `₱${Number(listing.price).toLocaleString("en-PH")}`,
+      tag: category?.name ?? "Fresh listing",
+      imageUrl: coverPath ? supabase.storage.from("listing-images").getPublicUrl(coverPath).data.publicUrl : null,
+    };
+  });
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#fbf8f2] text-[#281d1e]">
@@ -164,7 +143,8 @@ export default async function Home() {
               <span className="flex size-8 items-center justify-center rounded-full border-2 border-[#fbf8f2] bg-[#d3a445] text-xs font-bold text-white">J</span>
               <span className="flex size-8 items-center justify-center rounded-full border-2 border-[#fbf8f2] bg-[#aabda8] text-xs font-bold text-[#7b2432]">M</span>
             </div>
-            <span><strong className="text-[#281d1e]">1,200+</strong> Iskolars already here</span>
+            <span><strong className="text-[#281d1e]">PUP email verified</strong> · student-only marketplace</span>
+                      <span><strong className="text-[#281d1e]">PUP email verified</strong> · student-only marketplace</span>
           </div>
         </div>
 
@@ -195,33 +175,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="browse" className="bg-[#7b2432] px-5 py-16 text-white lg:px-10 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <p className="mb-3 text-xs font-bold tracking-[0.2em] text-[#f4d28e] uppercase">Start exploring</p>
-              <h2 className="font-serif text-4xl font-bold tracking-[-0.04em] sm:text-5xl">What are you looking for?</h2>
-            </div>
-            <div className="flex w-full max-w-md items-center gap-3 rounded-full bg-white px-5 py-3.5 text-sm text-[#8b7775]">
-              <SearchIcon />
-              <span>Search listings, categories, or sellers...</span>
-            </div>
-          </div>
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((category) => (
-              <Link href="/account" key={category.name} className="group rounded-2xl border border-white/20 bg-white/10 p-5 transition-colors hover:bg-white hover:text-[#7b2432]">
-                <div className="flex items-start justify-between">
-                  <span className="text-3xl text-[#f4d28e]">{category.icon}</span>
-                  <ArrowUpRight />
-                </div>
-                <h3 className="mt-9 font-serif text-xl font-bold">{category.name}</h3>
-                <p className="mt-1 text-xs text-white/60 group-hover:text-[#8b7775]">{category.count}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section id="listings" className="mx-auto max-w-7xl px-5 py-20 lg:px-10">
         <div className="flex items-end justify-between">
           <div>
@@ -231,11 +184,15 @@ export default async function Home() {
           <Link href="/account" className="hidden items-center gap-2 text-sm font-bold text-[#7b2432] md:flex">See all listings <ArrowUpRight /></Link>
         </div>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {featuredListings.map((listing) => (
+          {featuredListings.length > 0 ? featuredListings.map((listing) => (
             <article key={listing.title} className="group">
-              <div className={`relative flex h-64 items-center justify-center overflow-hidden rounded-2xl ${listing.color}`}>
-                <span className="absolute left-4 top-4 rounded-full bg-[#fffdf8]/80 px-3 py-1 text-[10px] font-bold tracking-wider text-[#7b2432] uppercase">{listing.tag}</span>
-                <div className="w-56 transition-transform duration-300 group-hover:scale-105"><ListingArt type={listing.art} /></div>
+              <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl bg-[#f5dfb4]">
+                <span className="absolute left-4 top-4 z-10 rounded-full bg-[#fffdf8]/80 px-3 py-1 text-[10px] font-bold tracking-wider text-[#7b2432] uppercase">{listing.tag}</span>
+                {listing.imageUrl ? (
+                  <Image src={listing.imageUrl} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                ) : (
+                  <div className="w-56 transition-transform duration-300 group-hover:scale-105"><ListingArt type="notes" /></div>
+                )}
               </div>
               <div className="flex items-start justify-between pt-4">
                 <div>
@@ -245,7 +202,13 @@ export default async function Home() {
                 <span className="font-bold text-[#7b2432]">{listing.price}</span>
               </div>
             </article>
-          ))}
+          )) : (
+            <div className="col-span-full rounded-2xl border border-dashed border-[#d8c6b5] bg-[#f5ead8] px-6 py-10 text-center">
+              <h3 className="font-serif text-2xl font-bold text-[#7b2432]">The next campus find could be yours.</h3>
+              <p className="mt-2 text-sm text-[#8b7775]">Be the first to share something with your fellow Iskolars.</p>
+              <Link href="/sell" className="mt-5 inline-flex rounded-full bg-[#7b2432] px-5 py-3 text-sm font-bold text-white">List an item</Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -254,13 +217,13 @@ export default async function Home() {
           <div>
             <p className="mb-3 text-xs font-bold tracking-[0.2em] text-[#b07b1d] uppercase">Made for campus life</p>
             <h2 className="max-w-md font-serif text-4xl font-bold leading-tight tracking-[-0.04em] text-[#7b2432] sm:text-5xl">Good finds. Good people. No hassle.</h2>
-            <p className="mt-5 max-w-md leading-7 text-[#69595a]">Every account is verified with a PUP email, so you can transact with confidence and keep things within the community.</p>
+            <p className="mt-5 max-w-md leading-7 text-[#69595a]">A student-first marketplace where you can browse openly, chat privately, and arrange a simple campus meetup when you find the right thing.</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
-              ["01", "Discover", "Browse things you actually need from fellow students."],
-              ["02", "Connect", "Chat directly and arrange a convenient campus meetup."],
-              ["03", "Isko win", "Get a great deal while supporting another Iskolar."],
+              ["01", "Browse", "Search real listings from fellow PUP students."],
+              ["02", "Message", "Ask questions and agree on a convenient meetup."],
+              ["03", "Meet up", "Pay in person and keep the campus community moving."],
             ].map(([number, title, description]) => (
               <div key={number} className="rounded-2xl bg-[#fffdf8] p-5">
                 <span className="font-mono text-xs font-bold text-[#d3a445]">{number}</span>
