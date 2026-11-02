@@ -151,13 +151,9 @@ async function ensureProfile(
   id: string,
   displayName: string,
 ) {
-  const { error } = await supabase.from("profiles").upsert(
-    {
-      id,
-      display_name: displayName,
-    },
-    { onConflict: "id", ignoreDuplicates: true },
-  );
+  const { error } = await supabase.rpc("ensure_profile", {
+    p_display_name: displayName,
+  });
 
   if (error) {
     throw new Error("Unable to create your profile. Please try again.");

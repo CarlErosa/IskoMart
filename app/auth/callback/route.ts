@@ -22,10 +22,9 @@ export async function GET(request: Request) {
       typeof data.user.user_metadata.display_name === "string"
         ? data.user.user_metadata.display_name
         : data.user.email?.split("@")[0] ?? "Iskolar";
-    const { error: profileError } = await supabase.from("profiles").upsert(
-      { id: data.user.id, display_name: displayName },
-      { onConflict: "id" },
-    );
+    const { error: profileError } = await supabase.rpc("ensure_profile", {
+      p_display_name: displayName,
+    });
     if (profileError) {
       return NextResponse.redirect(new URL("/auth?error=profile-creation-failed", url.origin));
     }
