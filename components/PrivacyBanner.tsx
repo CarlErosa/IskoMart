@@ -14,11 +14,14 @@ export default function PrivacyBanner() {
       return;
     }
 
-    try {
-      setVisible(window.localStorage.getItem(PRIVACY_NOTICE_STORAGE_KEY) !== "acknowledged");
-    } catch {
-      setVisible(true);
-    }
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        setVisible(window.localStorage.getItem(PRIVACY_NOTICE_STORAGE_KEY) !== "acknowledged");
+      } catch {
+        setVisible(true);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   function acknowledge() {

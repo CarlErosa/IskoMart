@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function ArrowUpRight() {
   return (
@@ -92,7 +93,8 @@ export default async function Home() {
           <a className="transition-colors hover:text-[#7b2432]" href="#how-it-works">How it works</a>
           <a className="transition-colors hover:text-[#7b2432]" href="#community">Our community</a>
         </div>
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <ThemeToggle />
           {isAuthenticated ? (
             <>
               <Link href="/profile" className="hidden text-sm font-bold text-[#7b2432] transition-colors hover:text-[#b07b1d] sm:inline">

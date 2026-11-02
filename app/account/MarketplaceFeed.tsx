@@ -10,6 +10,7 @@ import { signOut } from "@/app/auth/actions";
 import ModerationBadge from "@/components/ModerationBadge";
 import PostActions, { type PostComment } from "@/components/PostActions";
 import PostMenu from "@/components/PostMenu";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type FeedListing = {
   id: string;
@@ -106,6 +107,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, curre
           <Link href="/" aria-label="IskoMart home"><Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-10 w-36 object-contain sm:h-14 sm:w-52" /></Link>
           <div className="hidden items-center gap-8 text-sm text-[#8b7775] md:flex"><span className="font-semibold text-[#7b2432]">Home</span><Link href="/messages" className="transition hover:text-[#7b2432]">Messages</Link><Link href="/profile" className="transition hover:text-[#7b2432]">Profile</Link>{isAdmin && <Link href="/admin" className="font-semibold text-[#7b2432] transition hover:text-[#b07b1d]">Admin</Link>}</div>
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <ThemeToggle />
             <Link href="/messages" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Messages</Link>
             {isAdmin && <Link href="/admin" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Admin</Link>}
             <form action={signOut}><button type="submit" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:px-4 sm:text-sm">Sign out</button></form>

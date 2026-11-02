@@ -19,6 +19,41 @@
   }
 }
 
+html.dark {
+  color-scheme: dark;
+  --background: #171416;
+  --foreground: #f8f0e7;
+}
+
+html.dark body {
+  background: #171416;
+  color: #f8f0e7;
+}
+
+html.dark [class~="bg-[#fbf8f2]"] { background-color: #171416 !important; }
+html.dark [class~="bg-[#fffdf8]"] { background-color: #211c1e !important; }
+html.dark [class~="bg-[#f5ead8]"] { background-color: #302628 !important; }
+html.dark [class~="bg-[#f1dfbd]"] { background-color: #4a3b2b !important; }
+html.dark [class~="bg-[#ead7bb]"] { background-color: #443326 !important; }
+html.dark [class~="bg-[#d9e2d4]"] { background-color: #2d4036 !important; }
+html.dark [class~="bg-[#e4d9e8]"] { background-color: #3d3042 !important; }
+html.dark [class~="bg-[#dce7ed]"] { background-color: #293d47 !important; }
+html.dark [class~="bg-white"] { background-color: #2b2426 !important; }
+html.dark [class~="text-[#281d1e]"] { color: #f8f0e7 !important; }
+html.dark [class~="text-[#69595a]"] { color: #d3c3bc !important; }
+html.dark [class~="text-[#8b7775]"] { color: #b7a39c !important; }
+html.dark [class~="text-[#a4938d]"] { color: #a48f87 !important; }
+html.dark [class~="text-[#45383a]"] { color: #eadfd5 !important; }
+html.dark [class~="text-[#7b2432]"] { color: #efb4a7 !important; }
+html.dark [class~="text-[#b07b1d]"] { color: #edc36a !important; }
+html.dark [class~="text-[#f5ead8]"] { color: #f8f0e7 !important; }
+html.dark [class~="border-[#e8d9c5]"] { border-color: #49393b !important; }
+html.dark [class~="border-[#d8c5ac]"] { border-color: #5b4545 !important; }
+html.dark [class~="border-[#d8c6b5]"] { border-color: #5b4545 !important; }
+html.dark [class~="border-[#7b2432]"] { border-color: #efb4a7 !important; }
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #9e8982; }
+
 body {
   background: var(--background);
   color: var(--foreground);
