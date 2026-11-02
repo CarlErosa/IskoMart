@@ -3,6 +3,8 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { displayNameSchema } from "@/lib/content/schemas";
+import { normalizeText } from "@/lib/content/normalize";
 
 const authSchema = z.object({
   email: z
@@ -17,11 +19,7 @@ const authSchema = z.object({
 });
 
 const signupSchema = authSchema.extend({
-  displayName: z
-    .string()
-    .trim()
-    .min(2, "Enter your name.")
-    .max(80, "Name must be 80 characters or fewer."),
+  displayName: displayNameSchema,
 });
 
 export type AuthActionState = {
@@ -30,6 +28,10 @@ export type AuthActionState = {
 
 function getField(formData: FormData, name: string) {
   return String(formData.get(name) ?? "");
+}
+
+function isDuplicateAccountError(message: string): boolean {
+  return /already registered|duplicate key|database error saving new user|user already exists/i.test(message);
 }
 
 export async function signUp(
@@ -47,18 +49,29 @@ export async function signUp(
   }
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-    ?? (process.env.NODE_ENV === "production" ? "https://iskomartpup.vercel.app" : "http://localhost:3000");
+
+  const { data: identityTaken, error: identityError } = await supabase.rpc("gmail_identity_taken", {
+    p_email: parsed.data.email,
+  });
+
+  if (!identityError && identityTaken === true) {
+    return { error: "An account already exists for this Gmail address." };
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { display_name: parsed.data.displayName },
-      emailRedirectTo: `${siteUrl}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/callback`,
     },
   });
 
   if (error) {
+    if (isDuplicateAccountError(error.message)) {
+      return { error: "An account already exists for this Gmail address." };
+    }
+
     return { error: error.message };
   }
 
@@ -94,13 +107,19 @@ export async function signIn(
     return { error: "Confirm your Gmail address before signing in." };
   }
 
-  await ensureProfile(
-    supabase,
-    data.user.id,
-    typeof data.user.user_metadata.display_name === "string"
-      ? data.user.user_metadata.display_name
-      : data.user.email?.split("@")[0] ?? "Iskolar",
-  );
+  const metadataName = typeof data.user.user_metadata.display_name === "string"
+    ? data.user.user_metadata.display_name
+    : "";
+
+  const parsedName = displayNameSchema.safeParse(metadataName);
+  const fallbackName = normalizeText(data.user.email?.split("@")[0] ?? "Iskolar");
+  const displayName = parsedName.success
+    ? parsedName.data
+    : fallbackName.length >= 2
+      ? displayNameSchema.safeParse(fallbackName).data ?? "Iskolar"
+      : "Iskolar";
+
+  await ensureProfile(supabase, data.user.id, displayName);
   redirect("/account");
 }
 
@@ -109,7 +128,7 @@ export async function signOut() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    throw new Error(`Unable to sign out: ${error.message}`);
+    throw new Error("Unable to sign out. Please try again.");
   }
 
   redirect("/");
@@ -125,10 +144,10 @@ async function ensureProfile(
       id,
       display_name: displayName,
     },
-    { onConflict: "id" },
+    { onConflict: "id", ignoreDuplicates: true },
   );
 
   if (error) {
-    throw new Error(`Unable to create your profile: ${error.message}`);
+    throw new Error("Unable to create your profile. Please try again.");
   }
 }

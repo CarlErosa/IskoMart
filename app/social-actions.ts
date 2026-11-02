@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { mapDbError } from "@/lib/content/errors";
 
 export async function toggleLike(formData: FormData) {
   const listingId = String(formData.get("listingId") ?? "").trim();
@@ -23,18 +24,18 @@ export async function toggleLike(formData: FormData) {
     .eq(filterColumn, filterValue)
     .maybeSingle();
 
-  if (lookupError) throw new Error(`Unable to check like: ${lookupError.message}`);
+  if (lookupError) throw new Error("Unable to check that like. Please try again.");
 
   if (existing) {
     const { error } = await supabase.from("social_likes").delete().eq("id", existing.id);
-    if (error) throw new Error(`Unable to remove like: ${error.message}`);
+    if (error) throw new Error(mapDbError(error).userMessage);
   } else {
     const { error } = await supabase.from("social_likes").insert({
       user_id: userData.user.id,
       listing_id: listingId || null,
       need_post_id: needPostId || null,
     });
-    if (error) throw new Error(`Unable to like post: ${error.message}`);
+    if (error) throw new Error(mapDbError(error).userMessage);
   }
 
   revalidatePath("/account");

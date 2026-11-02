@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { updatePost } from "@/app/engagement-actions";
+import EditPostForm from "./EditPostForm";
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,11 +25,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
         <Link href="/account" className="text-sm font-semibold text-[#7b2432]">← Back to marketplace</Link>
         <p className="mt-8 text-[10px] font-bold tracking-[0.2em] text-[#b07b1d] uppercase">Edit post</p>
         <h1 className="mt-2 font-serif text-3xl font-bold text-[#7b2432] sm:text-4xl">Update your post</h1>
-        <form action={updatePost} className="mt-8 space-y-4">
-          <input type="hidden" name={post.kind === "listing" ? "listingId" : "needPostId"} value={id} />
-          <textarea name="body" defaultValue={post.body} required minLength={3} maxLength={post.kind === "listing" ? 5000 : 500} className="min-h-48 w-full resize-y rounded-2xl border border-[#e8d9c5] bg-[#fbf8f2] px-4 py-3 text-sm leading-6 outline-none focus:border-[#7b2432]" />
-          <button type="submit" className="w-full rounded-full bg-[#7b2432] px-5 py-3 font-bold text-white">Save changes</button>
-        </form>
+        <EditPostForm id={id} kind={post.kind} body={post.body} />
       </div>
     </main>
   );

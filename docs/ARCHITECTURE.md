@@ -50,3 +50,11 @@ configure the same restriction in the Supabase Auth policy or hook.
 - `lib/supabase/server.ts`: request-aware server client using secure cookies.
 - `lib/supabase/browser.ts`: browser client using only public Supabase variables.
 - `SUPABASE_SERVICE_ROLE_KEY`: server-only operational tooling, never imported by client code.
+
+## Moderation Flow
+
+Writes pass through `lib/content/schemas.ts` for validation and `lib/content/guard.ts` for a
+preflight classification. The insert still runs database triggers that normalize content,
+classify hard rules from `public.moderation_terms`, compute a duplicate fingerprint, enforce
+rate limits and account state, and set `moderation_status`. RLS then restricts hidden, removed,
+and blocked content. See `docs/MODERATION.md` for the full rule set and admin workflow.

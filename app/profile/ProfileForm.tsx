@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/browser";
+import { allowedImageTypes, hasValidImageSignature } from "@/lib/content/images";
 import { updateProfile, type ProfileActionState } from "./actions";
 
 const initialState: ProfileActionState = {};
@@ -17,11 +18,12 @@ export default function ProfileForm({ userId, displayName, avatarUrl, headerUrl,
 
   async function handleUpload(file: File | undefined, type: "avatar" | "header") {
     if (!file) return;
-    if (!file.type.startsWith("image/")) return setUploadError("Choose an image file.");
+    if (!allowedImageTypes.has(file.type)) return setUploadError("Use a JPG, PNG, or WebP image.");
     if (file.size > maxAvatarSize) return setUploadError("Images must be 2 MB or smaller.");
+    if (!(await hasValidImageSignature(file))) return setUploadError("That file does not look like a valid image.");
     setUploadError(undefined);
     setUploading(true);
-    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const extension = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
     const path = `${userId}/${type}.${extension}`;
     const supabase = createClient();
     const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true, cacheControl: "3600", contentType: file.type });
