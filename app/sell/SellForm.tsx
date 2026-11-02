@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import Image from "next/image";
 import { createListing, type SellActionState } from "./actions";
 
 type Category = { id: string; name: string };
@@ -14,9 +13,9 @@ export default function SellForm({ categories }: { categories: Category[] }) {
     <form action={action} className="space-y-6">
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-[#281d1e]">Photo <span className="text-[#7b2432]">*</span></span>
-        <span className="flex min-h-56 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[#d8c5ac] bg-[#fbf8f2] transition hover:border-[#7b2432]">
-          {preview ? <Image src={preview} alt="Listing preview" width={640} height={420} className="h-56 w-full object-cover" unoptimized /> : <span className="px-8 text-center text-sm leading-6 text-[#8b7775]">Upload a clear photo of your item<br /><span className="text-xs">JPG, PNG, or WebP · up to 5 MB</span></span>}
-          <input name="image" type="file" accept="image/jpeg,image/png,image/webp" required className="sr-only" onChange={(event) => {
+        <span className="relative flex min-h-56 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[#d8c5ac] bg-[#fbf8f2] transition hover:border-[#7b2432]">
+          {preview ? <div role="img" aria-label="Listing preview" className="h-56 w-full bg-cover bg-center" style={{ backgroundImage: `url(${preview})` }} /> : <span className="px-8 text-center text-sm leading-6 text-[#8b7775]">Upload a clear photo of your item<br /><span className="text-xs">JPG, PNG, or WebP · up to 5 MB</span></span>}
+          <input name="image" type="file" accept="image/*" required aria-label="Upload listing photo" className="absolute inset-0 h-full w-full cursor-pointer opacity-0" onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) setPreview(URL.createObjectURL(file));
           }} />
