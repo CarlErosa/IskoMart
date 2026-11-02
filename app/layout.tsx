@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import PrivacyBanner from "@/components/PrivacyBanner";
 import SiteFooter from "@/components/SiteFooter";
 import "./globals.css";
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}<SiteFooter /><PrivacyBanner /></body>
+      <body className="min-h-full flex flex-col">{children}<SiteFooter /><Suspense fallback={null}><PrivacyBanner /></Suspense></body>
     </html>
   );
 }
