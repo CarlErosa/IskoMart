@@ -16,7 +16,7 @@ async function AccountContent() {
   if (!authData.user) redirect("/login");
 
   const [{ data: profile }, { data: listings, error: listingsError }, { data: needs, error: needsError }, { data: categories, error: categoriesError }, { data: likes, error: likesError }, { data: reposts, error: repostsError }, { data: commentRows, error: commentsError }] = await Promise.all([
-    supabase.from("profiles").select("display_name, avatar_url").eq("id", authData.user.id).maybeSingle(),
+    supabase.from("profiles").select("display_name, avatar_url, is_admin").eq("id", authData.user.id).maybeSingle(),
     supabase.from("listings").select("id, seller_id, title, description, price, condition, meetup_location, created_at, profiles!listings_seller_id_fkey(display_name, campus, avatar_url), categories!listings_category_id_fkey(name), listing_images(storage_path, sort_order)").eq("is_available", true).order("created_at", { ascending: false }),
     supabase.from("need_posts").select("id, requester_id, body, created_at, profiles!need_posts_requester_id_fkey(display_name, campus, avatar_url), categories!need_posts_category_id_fkey(name)").order("created_at", { ascending: false }),
     supabase.from("categories").select("id, name").order("name"),
@@ -70,5 +70,5 @@ async function AccountContent() {
       comments: (commentRows ?? []).filter((comment) => comment.need_post_id === need.id).map((comment) => ({ id: comment.id, body: comment.body, authorName: commentNames.get(comment.author_id) ?? "PUP student" })),
     };
   });
-  return <MarketplaceFeed displayName={profile?.display_name ?? "Iskolar"} avatarUrl={profile?.avatar_url ?? null} currentUserId={authData.user.id} listings={feedListings} needs={feedNeeds} categories={(categories ?? []).map((category) => ({ id: category.id, name: category.name }))} />;
+  return <MarketplaceFeed displayName={profile?.display_name ?? "Iskolar"} avatarUrl={profile?.avatar_url ?? null} isAdmin={profile?.is_admin ?? false} currentUserId={authData.user.id} listings={feedListings} needs={feedNeeds} categories={(categories ?? []).map((category) => ({ id: category.id, name: category.name }))} />;
 }

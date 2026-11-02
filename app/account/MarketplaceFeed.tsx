@@ -133,7 +133,7 @@ function PostActions({ listingId, sellerId, needPostId, likeCount, repostCount, 
   );
 }
 
-export default function MarketplaceFeed({ displayName, avatarUrl, currentUserId, listings, needs, categories }: { displayName: string; avatarUrl: string | null; currentUserId: string; listings: FeedListing[]; needs: FeedNeed[]; categories: FeedCategory[] }) {
+export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, currentUserId, listings, needs, categories }: { displayName: string; avatarUrl: string | null; isAdmin: boolean; currentUserId: string; listings: FeedListing[]; needs: FeedNeed[]; categories: FeedCategory[] }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [composerOpen, setComposerOpen] = useState(false);
@@ -167,9 +167,10 @@ export default function MarketplaceFeed({ displayName, avatarUrl, currentUserId,
       <header className="sticky top-0 z-20 border-b border-[#e8d9c5]/80 bg-[#fbf8f2]/95 backdrop-blur">
         <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-5 px-5 lg:px-8">
           <Link href="/" aria-label="IskoMart home"><Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-10 w-36 object-contain sm:h-14 sm:w-52" /></Link>
-          <div className="hidden items-center gap-8 text-sm text-[#8b7775] md:flex"><span className="font-semibold text-[#7b2432]">Home</span><Link href="/messages" className="transition hover:text-[#7b2432]">Messages</Link><Link href="/profile" className="transition hover:text-[#7b2432]">Profile</Link></div>
+          <div className="hidden items-center gap-8 text-sm text-[#8b7775] md:flex"><span className="font-semibold text-[#7b2432]">Home</span><Link href="/messages" className="transition hover:text-[#7b2432]">Messages</Link><Link href="/profile" className="transition hover:text-[#7b2432]">Profile</Link>{isAdmin && <Link href="/admin" className="font-semibold text-[#7b2432] transition hover:text-[#b07b1d]">Admin</Link>}</div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link href="/messages" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Messages</Link>
+            {isAdmin && <Link href="/admin" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Admin</Link>}
             <form action={signOut}><button type="submit" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:px-4 sm:text-sm">Sign out</button></form>
             <Link href="/sell" className="whitespace-nowrap rounded-full bg-[#7b2432] px-3.5 py-2.5 text-xs font-bold text-white transition hover:bg-[#641d29] sm:px-5 sm:text-sm"><span className="sm:hidden">Sell</span><span className="hidden sm:inline">Sell something</span></Link>
           </div>
@@ -177,7 +178,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, currentUserId,
       </header>
 
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-8 lg:grid-cols-[190px_minmax(0,640px)_190px] lg:px-8">
-        <aside className="hidden lg:block"><div className="sticky top-28"><p className="mb-4 text-[10px] font-bold tracking-[0.2em] text-[#b07b1d] uppercase">Your space</p><Link href="/profile" className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-[#7b2432] transition hover:bg-[#f5ead8]"><AuthorAvatar name={displayName} avatarUrl={avatarUrl} tone="gold" />{displayName.split(" ")[0]}</Link><Link href="/messages" className="mt-2 block rounded-xl px-3 py-3 text-sm text-[#8b7775] transition hover:bg-[#f5ead8] hover:text-[#7b2432]">Messages</Link><Link href="/sell" className="mt-2 block rounded-xl px-3 py-3 text-sm text-[#8b7775] transition hover:bg-[#f5ead8] hover:text-[#7b2432]">＋ Create a listing</Link><form action={signOut} className="mt-2"><button type="submit" className="w-full rounded-xl px-3 py-3 text-left text-sm text-[#8b7775] transition hover:bg-[#f5ead8] hover:text-[#7b2432]">Sign out</button></form></div></aside>
+        <aside className="hidden lg:block"><div className="sticky top-28"><p className="mb-4 text-[10px] font-bold tracking-[0.2em] text-[#b07b1d] uppercase">Your space</p><Link href="/profile" className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-[#7b2432] transition hover:bg-[#f5ead8]"><AuthorAvatar name={displayName} avatarUrl={avatarUrl} tone="gold" />{displayName.split(" ")[0]}</Link><Link href="/messages" className="mt-2 block rounded-xl px-3 py-3 text-sm text-[#8b7775] transition hover:bg-[#f5ead8] hover:text-[#7b2432]">Messages</Link>{isAdmin && <Link href="/admin" className="mt-2 block rounded-xl px-3 py-3 text-sm font-semibold text-[#7b2432] transition hover:bg-[#f5ead8]">Admin moderation</Link>}<Link href="/sell" className="mt-2 block rounded-xl px-3 py-3 text-sm text-[#8b7775] transition hover:bg-[#f5ead8] hover:text-[#7b2432]">＋ Create a listing</Link><form action={signOut} className="mt-2"><button type="submit" className="w-full rounded-xl px-3 py-3 text-left text-sm text-[#8b7775] transition hover:bg-[#f5ead8] hover:text-[#7b2432]">Sign out</button></form></div></aside>
 
         <section>
           <div className="mb-5 flex items-center justify-between"><div><p className="text-[10px] font-bold tracking-[0.2em] text-[#b07b1d] uppercase">PUP marketplace</p><h1 className="mt-1 font-serif text-3xl font-bold tracking-[-0.04em] text-[#7b2432]">For you</h1></div><span className="rounded-full bg-[#f5ead8] px-3 py-1.5 text-xs font-semibold text-[#7b2432]">Fresh finds</span></div>
