@@ -133,9 +133,10 @@ export default function MarketplaceFeed({ displayName, avatarUrl, currentUserId,
         <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-5 px-5 lg:px-8">
           <Link href="/" aria-label="IskoMart home"><Image src="/logos/text_logo.png" alt="IskoMart" width={208} height={56} className="h-10 w-36 object-contain sm:h-14 sm:w-52" /></Link>
           <div className="hidden items-center gap-8 text-sm text-[#8b7775] md:flex"><span className="font-semibold text-[#7b2432]">Home</span><Link href="/messages" className="transition hover:text-[#7b2432]">Messages</Link><Link href="/profile" className="transition hover:text-[#7b2432]">Profile</Link></div>
-          <div className="flex items-center gap-2">
-            <form action={signOut}><button type="submit" className="rounded-full px-3 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:px-4 sm:text-sm">Sign out</button></form>
-            <Link href="/sell" className="rounded-full bg-[#7b2432] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#641d29] sm:px-5 sm:text-sm">Sell something</Link>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Link href="/messages" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:hidden">Messages</Link>
+            <form action={signOut}><button type="submit" className="whitespace-nowrap rounded-full px-2.5 py-2.5 text-xs font-semibold text-[#7b2432] transition hover:bg-[#f5ead8] sm:px-4 sm:text-sm">Sign out</button></form>
+            <Link href="/sell" className="whitespace-nowrap rounded-full bg-[#7b2432] px-3.5 py-2.5 text-xs font-bold text-white transition hover:bg-[#641d29] sm:px-5 sm:text-sm"><span className="sm:hidden">Sell</span><span className="hidden sm:inline">Sell something</span></Link>
           </div>
         </div>
       </header>
