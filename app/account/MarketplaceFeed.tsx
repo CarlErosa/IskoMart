@@ -30,7 +30,8 @@ type FeedListing = {
   likeCount: number;
   repostCount: number;
   liked: boolean;
-  reposted: boolean;
+  reposted: boolean | string | null;
+  sharedBy: string | null;
   comments: FeedComment[];
 };
 
@@ -51,7 +52,8 @@ type FeedNeed = {
   likeCount: number;
   repostCount: number;
   liked: boolean;
-  reposted: boolean;
+  reposted: boolean | string | null;
+  sharedBy: string | null;
   comments: FeedComment[];
 };
 
@@ -73,6 +75,36 @@ function RepostIcon({ active }: { active: boolean }) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px]" fill="none"><path d="m17 3 4 4-4 4M3 7h18M7 21l-4-4 4-4M21 17H3" stroke="currentColor" strokeWidth={active ? "2.2" : "1.7"} strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 
+function ShareIcon() {
+  return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px]" fill="none"><path d="M7 12a5 5 0 0 1 5-5h6M17 3l4 4-4 4M17 12a5 5 0 0 1-5 5H6M7 21l-4-4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+
+function ShareButton({ postId }: { postId: string }) {
+  const [shared, setShared] = useState(false);
+
+  async function sharePost() {
+    const url = `${window.location.origin}${window.location.pathname}#need-${postId}`;
+    const shareData = { title: "IskoMart post", text: "Check out this post on IskoMart", url };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+      setShared(true);
+      window.setTimeout(() => setShared(false), 2000);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      await navigator.clipboard?.writeText(url);
+      setShared(true);
+      window.setTimeout(() => setShared(false), 2000);
+    }
+  }
+
+  return <button type="button" onClick={sharePost} aria-label="Share post" className="ml-auto inline-flex items-center gap-1.5 transition hover:text-[#7b2432]"><ShareIcon /><span>{shared ? "Copied" : "Share"}</span></button>;
+}
+
 function PostMenu({ postId, isOwner, listing }: { postId: string; isOwner: boolean; listing: boolean }) {
   if (!isOwner) return <MoreIcon />;
   return <details className="relative"><summary className="cursor-pointer list-none text-[#a4938d]" aria-label="Post options"><MoreIcon /></summary><div className="absolute right-0 top-7 z-10 w-36 rounded-xl border border-[#e8d9c5] bg-[#fffdf8] p-1 shadow-lg"><a href={`/edit-post/${postId}`} className="block rounded-lg px-3 py-2 text-left text-xs font-semibold text-[#45383a] hover:bg-[#f5ead8]">Edit post</a><form action={deletePost} onSubmit={(event) => { if (!window.confirm("Delete this post permanently?")) event.preventDefault(); }}><input type="hidden" name={listing ? "listingId" : "needPostId"} value={postId} /><button type="submit" className="w-full rounded-lg px-3 py-2 text-left text-xs font-semibold text-[#7b2432] hover:bg-[#f7e5e3]">Delete post</button></form></div></details>;
@@ -84,15 +116,18 @@ function AuthorAvatar({ name, avatarUrl, tone }: { name: string; avatarUrl: stri
     : <span className={`flex size-10 shrink-0 items-center justify-center rounded-full font-serif text-lg font-bold text-[#7b2432] ${tone === "gold" ? "bg-[#f5dfb4]" : "bg-[#d9e2d4]"}`}>{name.charAt(0).toUpperCase()}</span>;
 }
 
-function PostActions({ listingId, sellerId, needPostId, likeCount, repostCount, liked, reposted, comments }: { listingId?: string; sellerId?: string; needPostId?: string; likeCount: number; repostCount: number; liked: boolean; reposted: boolean; comments: FeedComment[] }) {
+function PostActions({ listingId, sellerId, needPostId, likeCount, repostCount, liked, reposted, comments }: { listingId?: string; sellerId?: string; needPostId?: string; likeCount: number; repostCount: number; liked: boolean; reposted: boolean | string | null; comments: FeedComment[] }) {
+  const isReposted = reposted === true;
+  const sharedBy = typeof reposted === "string" ? reposted : isReposted ? "You" : null;
   return (
     <div className="mt-4">
+      {sharedBy && <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold text-[#8b7775]"><RepostIcon active />{sharedBy} shared this</p>}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-xs text-[#8b7775]">
         <LikeButton listingId={listingId} needPostId={needPostId} initialLiked={liked} initialCount={likeCount} />
         <details className="relative"><summary className="inline-flex cursor-pointer list-none items-center gap-1.5 transition hover:text-[#7b2432]"><CommentIcon /> <span>{comments.length}</span></summary><div className="absolute left-0 top-7 z-10 w-[min(18rem,calc(100vw-5rem))] rounded-xl border border-[#e8d9c5] bg-[#fbf8f2] p-3 shadow-lg">{comments.length > 0 && <div className="max-h-48 space-y-2 overflow-y-auto">{comments.map((comment) => <p key={comment.id} className="break-words text-xs leading-5 text-[#45383a]"><strong>{comment.authorName}</strong> {comment.body}</p>)}</div>}<form action={addComment} className="mt-3 flex gap-2"><input type="hidden" name="listingId" value={listingId ?? ""} /><input type="hidden" name="needPostId" value={needPostId ?? ""} /><input name="body" required maxLength={500} placeholder="Write a comment..." className="min-w-0 flex-1 rounded-full border border-[#e8d9c5] bg-white px-3 py-2 text-xs outline-none" /><button type="submit" className="shrink-0 font-bold text-[#7b2432]">Post</button></form></div></details>
-        <form action={toggleRepost}><input type="hidden" name="listingId" value={listingId ?? ""} /><input type="hidden" name="needPostId" value={needPostId ?? ""} /><button type="submit" aria-label={reposted ? "Undo repost" : "Repost"} className={`inline-flex items-center gap-1.5 transition hover:text-[#7b2432] ${reposted ? "font-bold text-[#7b2432]" : ""}`}><RepostIcon active={reposted} /> <span>{repostCount}</span></button></form>
+        <form action={toggleRepost}><input type="hidden" name="listingId" value={listingId ?? ""} /><input type="hidden" name="needPostId" value={needPostId ?? ""} /><button type="submit" aria-label={isReposted ? "Undo repost" : "Repost"} className={`inline-flex items-center gap-1.5 transition hover:text-[#7b2432] ${isReposted ? "font-bold text-[#7b2432]" : ""}`}><RepostIcon active={isReposted} /> <span>{repostCount}</span></button></form>
         {listingId && sellerId && <ContactSellerButton listingId={listingId} />}
-        {!listingId && <button type="button" aria-label="Share post" className="ml-auto transition hover:text-[#7b2432]">↗ Share</button>}
+        {!listingId && needPostId && <ShareButton postId={needPostId} />}
       </div>
     </div>
   );
@@ -179,7 +214,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, currentUserId,
           <div className="divide-y divide-[#e8d9c5]">{hasFeedContent ? (
             <>
             {matchingNeeds.map((need) => (
-              <article key={`need-${need.id}`} className="py-7"><div className="flex gap-3"><AuthorAvatar name={need.requesterName} avatarUrl={need.avatarUrl} tone="green" /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><h2 className="font-semibold text-[#281d1e]">{need.requesterName}</h2><p className="text-xs text-[#a4938d]">{need.campus ?? "PUP campus"} · {new Date(need.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric" })}</p></div><PostMenu postId={need.id} isOwner={need.requesterId === currentUserId} listing={false} /></div><div className="mt-4 rounded-2xl bg-[#d9e2d4] p-5"><span className="rounded-full bg-white/70 px-3 py-1 text-[10px] font-bold tracking-wider text-[#7b2432] uppercase">Looking for · {need.category}</span><p className="mt-4 text-[15px] leading-7 text-[#45383a]">{need.body}</p></div><PostActions needPostId={need.id} likeCount={need.likeCount} repostCount={need.repostCount} liked={need.liked} reposted={need.reposted} comments={need.comments} /></div></div></article>
+              <article id={`need-${need.id}`} key={`need-${need.id}`} className="py-7">{need.sharedBy && <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold text-[#8b7775]"><RepostIcon active />{need.sharedBy} shared this</p>}<div className="flex gap-3"><AuthorAvatar name={need.requesterName} avatarUrl={need.avatarUrl} tone="green" /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><h2 className="font-semibold text-[#281d1e]">{need.requesterName}</h2><p className="text-xs text-[#a4938d]">{need.campus ?? "PUP campus"} · {new Date(need.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric" })}</p></div><PostMenu postId={need.id} isOwner={need.requesterId === currentUserId} listing={false} /></div><div className="mt-4 rounded-2xl bg-[#d9e2d4] p-5"><span className="rounded-full bg-white/70 px-3 py-1 text-[10px] font-bold tracking-wider text-[#7b2432] uppercase">Looking for · {need.category}</span><p className="mt-4 text-[15px] leading-7 text-[#45383a]">{need.body}</p></div><PostActions needPostId={need.id} likeCount={need.likeCount} repostCount={need.repostCount} liked={need.liked} reposted={need.reposted} comments={need.comments} /></div></div></article>
             ))}
             {filteredListings.map((listing, index) => (
             <article key={listing.id} className="py-7"><div className="flex gap-3"><AuthorAvatar name={listing.sellerName} avatarUrl={listing.avatarUrl} tone="gold" /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><h2 className="font-semibold text-[#281d1e]">{listing.sellerName}</h2><p className="text-xs text-[#a4938d]">{listing.campus ?? "PUP campus"} · {new Date(listing.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric" })}</p></div><PostMenu postId={listing.id} isOwner={listing.sellerId === currentUserId} listing /></div><p className="mt-4 text-[15px] leading-7 text-[#45383a]">{listing.description}</p><div className={`mt-4 overflow-hidden rounded-2xl ${postColors[index % postColors.length]}`}>{listing.imageUrl ? <Image src={listing.imageUrl} alt={listing.title} width={640} height={420} className="h-64 w-full object-cover" unoptimized /> : <div className="flex min-h-44 flex-col justify-between p-6 sm:min-h-52"><div className="flex items-start justify-between"><span className="rounded-full bg-white/70 px-3 py-1 text-[10px] font-bold tracking-wider text-[#7b2432] uppercase">{listing.category}</span><span className="font-serif text-5xl font-bold text-[#7b2432]/20">{listing.title.charAt(0).toUpperCase()}</span></div><div><h3 className="font-serif text-2xl font-bold text-[#7b2432]">{listing.title}</h3><p className="mt-1 text-lg font-bold text-[#281d1e]">₱{listing.price.toLocaleString("en-PH")}</p></div></div>}</div><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#8b7775]"><span className="rounded-full bg-[#f5ead8] px-3 py-1 font-semibold text-[#7b2432]">{listing.category}</span><span>{listing.condition?.replace("_", " ") ?? "Condition not specified"}</span>{listing.meetupLocation && <span>· Meet at {listing.meetupLocation}</span>}<span className="ml-auto font-bold text-[#7b2432]">₱{listing.price.toLocaleString("en-PH")}</span></div><PostActions listingId={listing.id} sellerId={listing.sellerId} likeCount={listing.likeCount} repostCount={listing.repostCount} liked={listing.liked} reposted={listing.reposted} comments={listing.comments} /></div></div></article>
