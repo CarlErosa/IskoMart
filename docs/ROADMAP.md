@@ -2,7 +2,7 @@
 
 1. Scaffold the Next.js App Router application with strict TypeScript, Tailwind CSS, pnpm
    scripts, and the Supabase browser/server client helpers.
-2. Apply the initial migration and implement PUP-email signup, verification, session handling,
+2. Apply the initial migration and implement Gmail signup, verification, session handling,
    and protected profile creation.
 3. Build seller storefront and listing CRUD, including validated image uploads to Supabase
    Storage and listing ownership checks.

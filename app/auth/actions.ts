@@ -10,8 +10,8 @@ const authSchema = z.object({
     .trim()
     .toLowerCase()
     .email("Enter a valid email address.")
-    .refine((email) => email.endsWith("@iskolarngbayan.pup.edu.ph"), {
-      message: "Use your PUP webmail address ending in @iskolarngbayan.pup.edu.ph.",
+    .refine((email) => email.endsWith("@gmail.com"), {
+      message: "Use your personal Gmail address ending in @gmail.com.",
     }),
   password: z.string().min(8, "Password must be at least 8 characters."),
 });
@@ -89,7 +89,7 @@ export async function signIn(
   }
 
   if (!data.user.email_confirmed_at) {
-    return { error: "Confirm your PUP email before signing in." };
+    return { error: "Confirm your Gmail address before signing in." };
   }
 
   await ensureProfile(

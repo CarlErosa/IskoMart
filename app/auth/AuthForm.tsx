@@ -38,20 +38,20 @@ export default function AuthForm({
       </Link>
       <section className="mx-auto mt-8 max-w-md rounded-3xl border border-[#e8d9c5] bg-[#fffdf8] p-7 shadow-[8px_8px_0_#f1dfbd] sm:p-9">
         <p className="text-xs font-bold tracking-[0.2em] text-[#b07b1d] uppercase">
-          PUP student access
+          Community access
         </p>
         <h1 className="mt-3 font-serif text-4xl font-bold tracking-[-0.04em] text-[#7b2432]">
           {isSignUp ? "Join the IskoMart community." : "Welcome back, Iskolar."}
         </h1>
         <p className="mt-3 text-sm leading-6 text-[#69595a]">
           {isSignUp
-            ? "Create your account with your verified PUP email to buy and sell on campus."
-            : "Sign in with your verified PUP email to continue."}
+            ? "Create your account with your personal Gmail address to buy and sell on campus."
+            : "Sign in with your verified Gmail address to continue."}
         </p>
 
         {showCheckEmail && (
           <p className="mt-5 rounded-xl bg-[#f5ead8] px-4 py-3 text-sm leading-6 text-[#7b2432]">
-            Check your PUP inbox to verify your email. After confirming, you&apos;ll be sent to the login page.
+            Check your Gmail inbox to verify your email. After confirming, you&apos;ll be sent to the login page.
           </p>
         )}
         {showVerified && (
@@ -79,14 +79,14 @@ export default function AuthForm({
             </label>
           )}
           <label className="block text-sm font-semibold text-[#69595a]">
-            PUP email
+            Gmail address
             <input
               name="email"
               type="email"
               required
               autoComplete="email"
               className="mt-2 w-full rounded-xl border border-[#e8d9c5] bg-[#fbf8f2] px-4 py-3 font-normal outline-none transition focus:border-[#7b2432] focus:ring-2 focus:ring-[#d3a445]/30"
-              placeholder="you@iskolarngbayan.pup.edu.ph"
+              placeholder="you@gmail.com"
             />
           </label>
           <label className="block text-sm font-semibold text-[#69595a]">

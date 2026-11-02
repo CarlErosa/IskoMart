@@ -73,7 +73,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#fbf8f2] text-[#281d1e]">
       <div className="border-b border-[#e8d9c5] bg-[#f5ead8] px-5 py-2 text-center text-[11px] font-semibold tracking-[0.18em] text-[#7b2432] uppercase">
-        Built for Iskolars. Verified with your PUP email.
+        Built for Iskolars. Verified with your Gmail address.
       </div>
 
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6 lg:px-10">
@@ -143,8 +143,7 @@ export default async function Home() {
               <span className="flex size-8 items-center justify-center rounded-full border-2 border-[#fbf8f2] bg-[#d3a445] text-xs font-bold text-white">J</span>
               <span className="flex size-8 items-center justify-center rounded-full border-2 border-[#fbf8f2] bg-[#aabda8] text-xs font-bold text-[#7b2432]">M</span>
             </div>
-            <span><strong className="text-[#281d1e]">PUP email verified</strong> · student-only marketplace</span>
-                      <span><strong className="text-[#281d1e]">PUP email verified</strong> · student-only marketplace</span>
+            <span><strong className="text-[#281d1e]">Gmail verified</strong> · campus marketplace</span>
           </div>
         </div>
 
