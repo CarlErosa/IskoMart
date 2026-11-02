@@ -51,7 +51,7 @@ export default function AuthForm({
 
         {showCheckEmail && (
           <p className="mt-5 rounded-xl bg-[#f5ead8] px-4 py-3 text-sm leading-6 text-[#7b2432]">
-            Check your Gmail inbox to verify your email. After confirming, you&apos;ll be sent to the login page.
+            Check your Gmail inbox, Spam, or Promotions tab to verify your email. After confirming, you&apos;ll be sent to the login page.
           </p>
         )}
         {showVerified && (
