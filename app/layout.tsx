@@ -16,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "IskoMart",
   description: "A marketplace for PUP students",
+  icons: {
+    icon: "/logos/logo-removebg-preview.png",
+    apple: "/logos/logo-removebg-preview.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

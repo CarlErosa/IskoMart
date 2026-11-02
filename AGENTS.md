@@ -4,7 +4,7 @@
 
 - Package manager: pnpm.
 - Deployment target: Vercel.
-- PUP student verification uses an approved `@pup.edu.ph` email address.
+- PUP student verification uses an approved `@iskolarngbayan.pup.edu.ph` email address.
 - Seller contact is implemented as in-app chat.
 - MVP transactions are meetup and payment in person; there are no online payments.
 - The initial schema targets a single PUP marketplace, with no admin dashboard in the MVP.
