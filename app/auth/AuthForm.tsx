@@ -108,6 +108,16 @@ export default function AuthForm({
               placeholder="At least 8 characters"
             />
           </label>
+          {!isSignUp && (
+            <p className="text-right">
+              <Link
+                href="/auth/reset"
+                className="text-xs font-semibold text-[#7b2432] underline decoration-[#d3a445] underline-offset-2"
+              >
+                Forgot password?
+              </Link>
+            </p>
+          )}
           {isSignUp && (
             <div className="flex items-start gap-3 rounded-xl border border-[#e8d9c5] bg-[#fbf8f2] p-3">
               <input
