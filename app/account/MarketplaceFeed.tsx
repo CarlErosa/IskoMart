@@ -195,6 +195,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, curre
                         authorId={need.requesterId}
                         authorName={need.requesterName}
                         isBlocked={blockedUserIds.includes(need.requesterId)}
+                        isAdmin={isAdmin}
                       />
                     </div>
                     <div className="mt-4 rounded-2xl bg-[#d9e2d4] p-5">
@@ -239,6 +240,7 @@ export default function MarketplaceFeed({ displayName, avatarUrl, isAdmin, curre
                       authorId={listing.sellerId}
                       authorName={listing.sellerName}
                       isBlocked={blockedUserIds.includes(listing.sellerId)}
+                      isAdmin={isAdmin}
                     />
                   </div>
                   <p className="mt-4 whitespace-pre-line text-[15px] leading-7 text-[#45383a]">{listing.description}</p>

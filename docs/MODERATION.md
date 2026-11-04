@@ -69,6 +69,9 @@ or service-role key is required.
 3. **Users** — recent accounts with mute, suspend, and reinstate actions.
 4. **Audit log** — every moderation action with the admin, target, action, reason, and time.
 
+Admins can also delete any listing or request from its post menu in the feed or on the post
+page; that path writes the same audit entry.
+
 Every admin action writes to `public.moderation_actions`.
 
 ## Adding terms

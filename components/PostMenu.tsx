@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { deletePost } from "@/app/engagement-actions";
+import { deleteModerationItem } from "@/app/admin/actions";
 import {
   reportContent,
   toggleBlock,
@@ -18,6 +19,7 @@ export default function PostMenu({
   authorId,
   authorName,
   isBlocked,
+  isAdmin = false,
   returnToAccount = false,
 }: {
   postId: string;
@@ -26,6 +28,7 @@ export default function PostMenu({
   authorId: string;
   authorName: string;
   isBlocked: boolean;
+  isAdmin?: boolean;
   returnToAccount?: boolean;
 }) {
   const router = useRouter();
@@ -78,6 +81,24 @@ export default function PostMenu({
           </>
         ) : (
           <>
+            {isAdmin && (
+              <form
+                action={deleteModerationItem}
+                className="mb-1 border-b border-[#e8d9c5] pb-1"
+                onSubmit={(event) => {
+                  if (!window.confirm("Delete this post permanently as an admin?")) event.preventDefault();
+                }}
+              >
+                <input type="hidden" name={listing ? "listingId" : "needPostId"} value={postId} />
+                <input type="hidden" name="returnToAccount" value="1" />
+                <button
+                  type="submit"
+                  className="w-full rounded-lg px-3 py-2 text-left text-xs font-semibold text-[#7b2432] transition hover:bg-[#f7e5e3]"
+                >
+                  Delete post (admin)
+                </button>
+              </form>
+            )}
             {reportState.success ? (
               <p className="rounded-lg bg-[#e4efdf] px-3 py-2 text-xs leading-5 text-[#345b36]">
                 Thanks. A moderator will review this post.
