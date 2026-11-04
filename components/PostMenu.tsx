@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 import { deletePost } from "@/app/engagement-actions";
 import {
   reportContent,
@@ -27,9 +28,20 @@ export default function PostMenu({
   isBlocked: boolean;
   returnToAccount?: boolean;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [reportOpen, setReportOpen] = useState(false);
   const [reportState, reportAction, reportPending] = useActionState<ReportActionState, FormData>(reportContent, {});
   const [blockState, blockAction, blockPending] = useActionState<BlockActionState, FormData>(toggleBlock, {});
+
+  useEffect(() => {
+    if (!blockState.success) return;
+    if (pathname.startsWith("/post/")) {
+      router.push("/account");
+    } else {
+      router.refresh();
+    }
+  }, [blockState, pathname, router]);
 
   return (
     <details className="relative shrink-0">

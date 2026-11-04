@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import BlockedUsers from "./BlockedUsers";
 
 type ProfilePost = {
   id: string;
@@ -20,6 +21,7 @@ export default function ProfileSocial({
   bio,
   posts,
   likedPosts,
+  blockedUsers,
 }: {
   displayName: string;
   avatarUrl: string | null;
@@ -27,8 +29,9 @@ export default function ProfileSocial({
   bio: string | null;
   posts: ProfilePost[];
   likedPosts: ProfilePost[];
+  blockedUsers: { id: string; name: string; campus: string | null }[];
 }) {
-  const [tab, setTab] = useState<"posts" | "liked">("posts");
+  const [tab, setTab] = useState<"posts" | "liked" | "blocked">("posts");
   const visiblePosts = tab === "posts" ? posts : likedPosts;
   const initial = displayName.charAt(0).toUpperCase();
 
@@ -61,8 +64,9 @@ export default function ProfileSocial({
           <div className="flex border-b border-[#e8d9c5]">
             <button type="button" onClick={() => setTab("posts")} className={`flex-1 border-b-2 px-4 py-4 text-sm font-semibold ${tab === "posts" ? "border-[#7b2432] text-[#7b2432]" : "border-transparent text-[#a4938d]"}`}>Posts</button>
             <button type="button" onClick={() => setTab("liked")} className={`flex-1 border-b-2 px-4 py-4 text-sm font-semibold ${tab === "liked" ? "border-[#7b2432] text-[#7b2432]" : "border-transparent text-[#a4938d]"}`}>Liked</button>
+            <button type="button" onClick={() => setTab("blocked")} className={`flex-1 border-b-2 px-4 py-4 text-sm font-semibold ${tab === "blocked" ? "border-[#7b2432] text-[#7b2432]" : "border-transparent text-[#a4938d]"}`}>Blocked</button>
           </div>
-          {visiblePosts.length ? visiblePosts.map((post) => (
+          {tab === "blocked" ? <BlockedUsers users={blockedUsers} /> : visiblePosts.length ? visiblePosts.map((post) => (
             <article key={`${post.kind}-${post.id}`} className="border-b border-[#e8d9c5]">
               <Link
                 href={`/post/${post.id}`}

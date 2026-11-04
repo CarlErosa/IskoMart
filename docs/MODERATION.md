@@ -53,8 +53,9 @@ or service-role key is required.
 - Users can report listings, requests, comments, messages, reviews, and profiles.
 - A report stores a snapshot of the reported content so moderators can review it without
   reading a full private conversation.
-- Users can block another account; blocked accounts disappear from the blocker's public feed,
-  comments, and reviews.
+- Users can block another account; blocked accounts disappear from the blocker's feed, comments,
+  reviews, conversations, and messages. Blocked accounts can be unblocked from the Blocked
+  tab on your profile. Admin accounts are exempt so moderators still see reported content.
 - Admins see reported message snapshots only. The `messages` table itself remains restricted
   to conversation participants.
 

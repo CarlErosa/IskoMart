@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   reportContent,
   toggleBlock,
@@ -27,8 +28,13 @@ export default function ReportMenu({
   allowBlock?: boolean;
   inline?: boolean;
 }) {
+  const router = useRouter();
   const [reportState, reportAction, reportPending] = useActionState<ReportActionState, FormData>(reportContent, {});
   const [blockState, blockAction, blockPending] = useActionState<BlockActionState, FormData>(toggleBlock, {});
+
+  useEffect(() => {
+    if (blockState.success) router.push("/messages");
+  }, [blockState, router]);
 
   return (
     <details className="relative shrink-0">
