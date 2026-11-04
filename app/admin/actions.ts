@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
   contentStatusSchema,
@@ -102,6 +103,7 @@ export async function deleteModerationItem(formData: FormData) {
   }
 
   revalidateModerationPaths();
+  if (formData.get("returnToAccount") === "1") redirect("/account");
 }
 
 export async function setContentStatus(formData: FormData) {

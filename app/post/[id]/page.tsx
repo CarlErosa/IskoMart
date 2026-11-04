@@ -61,11 +61,12 @@ async function PostContent({ params }: { params: Promise<{ id: string }> }) {
   if (!listing && !need) notFound();
 
   const targetColumn = listing ? "listing_id" : "need_post_id";
-  const [{ data: likes }, { data: reposts }, { data: commentRows }, { data: blocks }] = await Promise.all([
+  const [{ data: likes }, { data: reposts }, { data: commentRows }, { data: blocks }, { data: viewer }] = await Promise.all([
     supabase.from("social_likes").select("user_id").eq(targetColumn, id),
     supabase.from("social_reposts").select("user_id, created_at").eq(targetColumn, id).order("created_at", { ascending: false }),
     supabase.from("post_comments").select("id, author_id, body, moderation_status, created_at").eq(targetColumn, id).order("created_at", { ascending: true }),
     supabase.from("user_blocks").select("blocked_id").eq("blocker_id", authData.user.id),
+    supabase.from("profiles").select("is_admin").eq("id", authData.user.id).maybeSingle(),
   ]);
 
   const authorIds = [...new Set((commentRows ?? []).map((comment) => comment.author_id))];
@@ -138,6 +139,7 @@ async function PostContent({ params }: { params: Promise<{ id: string }> }) {
               authorId={authorId}
               authorName={authorName}
               isBlocked={blockedUserIds.includes(authorId)}
+              isAdmin={viewer?.is_admin ?? false}
               returnToAccount
             />
           </div>
