@@ -103,6 +103,7 @@ export async function toggleBlock(
 
     revalidatePath("/account");
     revalidatePath("/messages");
+    revalidatePath("/profile");
     return { success: true };
   } catch (error) {
     return toActionError(error);
